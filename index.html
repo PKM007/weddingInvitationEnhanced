@@ -259,7 +259,7 @@ text-shadow:none;animation:shimmer 6s linear infinite;filter:drop-shadow(0 0 22p
       <h3>Haldi / Mehendi Carnival</h3>
       <p class="it">A joyful morning of turmeric, henna and laughter — come dressed in yellow.</p>
       <p>Wednesday, 2nd December 2026 · 10:00 AM onwards</p>
-      <p class="vname">Venue Name</p>
+      <p class="vname">Sayashra Resort</p>
       <a class="link dir" href="#" target="_blank">Get Directions →</a>
     </article>
     <article class="card event reveal">
@@ -267,7 +267,7 @@ text-shadow:none;animation:shimmer 6s linear infinite;filter:drop-shadow(0 0 22p
       <h3>Sangeet</h3>
       <p class="it">An evening of music, dance and heartfelt performances by family and friends.</p>
       <p>Wednesday, 2nd December 2026 · 7:00 PM onwards</p>
-      <p class="vname">Venue Name</p>
+      <p class="vname">Sayashra Resort</p>
       <a class="link dir" href="#" target="_blank">Get Directions →</a>
     </article>
     <article class="card event reveal">
@@ -275,7 +275,7 @@ text-shadow:none;animation:shimmer 6s linear infinite;filter:drop-shadow(0 0 22p
       <h3>Shaadi</h3>
       <p class="it">Sacred mantras, blessings and the beginning of a new journey together.</p>
       <p>Thursday, 3rd December 2026 · 8:00 PM onwards</p>
-      <p class="vname">Venue Name</p>
+      <p class="vname">Sayashra Resort</p>
       <a class="link dir" href="#" target="_blank">Get Directions →</a>
     </article>
   </div>
@@ -336,7 +336,7 @@ text-shadow:none;animation:shimmer 6s linear infinite;filter:drop-shadow(0 0 22p
     <div class="chip"><small>Shaadi</small>Thu, 3rd Dec 2026 · 8:00 PM</div>
   </div>
   <article class="card venue reveal">
-    <h3 class="vname">Venue Name</h3>
+    <h3 class="vname">Sayashra Resort</h3>
     <p class="addr" id="vaddr">Venue address</p>
     <iframe class="map" id="vmap" loading="lazy"></iframe>
     <a class="btn-gold sm dir" href="#" target="_blank">Get Directions</a>
@@ -406,7 +406,13 @@ text-shadow:none;animation:shimmer 6s linear infinite;filter:drop-shadow(0 0 22p
 const $ = s => document.querySelector(s);
 const WEDDING = new Date('2026-12-03T20:00:00+05:30'); // Shaadi
 // ---- EDIT YOUR VENUE HERE ----
-const VENUE = { name: 'Venue Name', address: 'Venue address, City', mapQuery: 'Venue Name, City' };
+const VENUE = {
+  name: 'Sayashra Resort',
+  address: '',                                   // optional: add the full address here
+  link: 'https://maps.app.goo.gl/Wmg3D2qXYw42NhYx7', // used by every "Get Directions" button
+  mapQuery: 'Sayashra Resort',                   // used for the embedded map (add the city for accuracy)
+  embed: ''                                      // optional: paste the src from Google Maps > Share > Embed a map
+};
 const toast = t => { const e = $('#toast'); e.textContent = t; e.classList.add('show'); setTimeout(() => e.classList.remove('show'), 2200); };
 
 // ---- Share URL: set this to your Vercel link (used by WhatsApp share + Copy Link) ----
@@ -539,9 +545,9 @@ function observe() {
 
 // Venue (fills name, address, map and every Get Directions link)
 document.querySelectorAll('.vname').forEach(e => e.textContent = VENUE.name);
-$('#vaddr').textContent = VENUE.address;
-$('#vmap').src = 'https://www.google.com/maps?q=' + encodeURIComponent(VENUE.mapQuery) + '&output=embed';
-document.querySelectorAll('.dir').forEach(a => a.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(VENUE.mapQuery));
+VENUE.address ? $('#vaddr').textContent = VENUE.address : $('#vaddr').remove();
+$('#vmap').src = VENUE.embed || 'https://www.google.com/maps?q=' + encodeURIComponent(VENUE.mapQuery) + '&output=embed';
+document.querySelectorAll('.dir').forEach(a => a.href = VENUE.link);
 
 // Countdown
 function tick() {
@@ -570,7 +576,7 @@ $('#shCal').onclick = () => {
   const f = d => d.toISOString().replace(/[-:]|\.\d{3}/g, '');
   const ev = [['Haldi / Mehendi Carnival (Yellow theme)', '2026-12-02T10:00:00+05:30', 4], ['Sangeet', '2026-12-02T19:00:00+05:30', 4], ['Shaadi', '2026-12-03T20:00:00+05:30', 5]];
   const body = ev.map(([n, s, hrs]) => { const d = new Date(s);
-    return `BEGIN:VEVENT\nSUMMARY:Prakhar & Neha – ${n}\nDTSTART:${f(d)}\nDTEND:${f(new Date(+d + hrs * 36e5))}\nLOCATION:${VENUE.name}, ${VENUE.address}\nEND:VEVENT`; }).join('\n');
+    return `BEGIN:VEVENT\nSUMMARY:Prakhar & Neha – ${n}\nDTSTART:${f(d)}\nDTEND:${f(new Date(+d + hrs * 36e5))}\nLOCATION:${VENUE.name}${VENUE.address ? ', ' + VENUE.address : ''}\nDESCRIPTION:Directions: ${VENUE.link}\nEND:VEVENT`; }).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([`BEGIN:VCALENDAR\nVERSION:2.0\n${body}\nEND:VCALENDAR`], { type: 'text/calendar' }));
   a.download = 'prakhar-neha-wedding.ics'; a.click();
